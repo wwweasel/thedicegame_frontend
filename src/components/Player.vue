@@ -17,7 +17,7 @@
           <ion-grid>
             <ion-row>
               <ion-col size="1"><ion-badge color="medium">{{playerId}}</ion-badge></ion-col>
-              <ion-col size="11"><ion-text><h3>{{getPlayer(playerId).name}}</h3></ion-text></ion-col>
+              <ion-col size="11"><ion-text><h3>{{getPlayer(playerId).name!=null ? getPlayer(playerId).name:'Anonymous'}}</h3></ion-text></ion-col>
             </ion-row>
             <ion-row>
               <ion-col size="1"><ion-label></ion-label></ion-col>
@@ -46,13 +46,19 @@
 
       </ion-list>
 
+      <ion-fab vertical="top" horizontal="end" slot="fixed" edge="true">
+          <ion-fab-button @click="triggerPlay" color="danger">
+              <ios-play-icon w="30px" h="30px"/>
+          </ion-fab-button>
+      </ion-fab>
+
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button>
           <ios-arrow-up-icon w="30px" h="30px"/>
         </ion-fab-button>
         <ion-fab-list side="top">
           <ion-fab-button @click="openModal" color="medium"><ios-create-icon w="20px" h="20px"/></ion-fab-button>
-          <ion-fab-button @click="openModal" color="danger"><ios-trash-icon w="20px" h="20px"/></ion-fab-button>
+          <ion-fab-button @click="delPlayerGames" color="danger"><ios-trash-icon w="20px" h="20px"/></ion-fab-button>
         </ion-fab-list>
       </ion-fab>
 
@@ -64,7 +70,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import CreatePlayerModal from '../components/CreatePlayerModal.vue';
-export default {
+
+export  default{
     name: "Player",
     props:{
         playerId:{
@@ -72,7 +79,7 @@ export default {
         },
     },
     methods:{
-        ...mapActions(['loadPlayerGames','savePlayer']),
+        ...mapActions(['loadPlayerGames','modifyPlayer','play','deletePlayerGames']),
         openModal(){
             return this.$ionic.modalController
             .create({
@@ -84,12 +91,19 @@ export default {
                     },
                     propsData: {
                         title: 'Edit Player',
-                        playerId: Number(this.playerId)
+                        playerId: Number(this.playerId),
+                        playerName: this.getPlayer(Number(this.playerId)).name
                     },
                     parent: this,
                 },
             })
             .then(m => m.present())
+        },
+        triggerPlay(){
+          this.play(Number(this.playerId));
+        },
+        delPlayerGames(){
+          this.deletePlayerGames(Number(this.playerId));
         }
     },
     computed: {
@@ -104,7 +118,7 @@ export default {
         // which emits 'closeModal' as well as the emitPlayer
         this.$on('closeModal', (emitPlayer) => {
             //console.log(emitPlayer.name, emitPlayer.id);
-            this.savePlayer(emitPlayer);
+            this.modifyPlayer(emitPlayer);
             this.$ionic.modalController.dismiss();
         })
     }

@@ -9,7 +9,6 @@ const state = {
     players:[],
     playerGames:[],
     tmpPlayer: {id: 1, name: 'Anonymous'},
-    games:[]
 };
 
 const getters = {
@@ -17,11 +16,8 @@ const getters = {
     getPlayer: (state) => (id) => {
         return state.players.find( player => player.id == id )
     },
-    getPlayerGames: (state) => state.playerGames,
     getTmpPlayer: (state) => state.tmpPlayer,
-    getPlayerGames: (state) => (playerId) => {
-        return state.games.find( game => game.playerId == playerId )
-    },
+    getPlayerGames: (state) => state.playerGames
 };
 
 const actions = {
@@ -33,16 +29,25 @@ const actions = {
         const response = await AXIOS.get('http://localhost:8081/players/'+playerId+'/games');
         commit('commitPlayerGames',response.data);
     },
-    async savePlayer({commit}, newPlayer){
+    async createPlayer({commit}, newPlayer){
         const response = await AXIOS.post('http://localhost:8081/players', newPlayer);
-        commit('commitSavePlayer',response.data);
+        commit('commitCreatePlayer',response.data);
+    },
+    async modifyPlayer({commit}, newPlayer){
+        const response = await AXIOS.put('http://localhost:8081/players', newPlayer);
+        commit('commitModifyPlayer',response.data);
     },
     async setTmpPlayer({commit}, tmpPlayer){
         commit('commitSetTmpPlayer',tmpPlayer);
     },
-    async play({commit}, playerId){
+    async play({commit, dispatch}, playerId){
         const response = await AXIOS.post('http://localhost:8081/players/'+playerId+'/games');
         commit('commitPlay',response.data);
+        dispatch('loadPlayers'); // Call action within action in order to update the successrate 
+    },
+    async deletePlayerGames({commit}, playerId){
+        const response = await AXIOS.delete('http://localhost:8081/players/'+playerId+'/games');
+        commit('commitDeletePlayerGames',response.data);
     },
     
 
@@ -55,26 +60,26 @@ const mutations = {
     commitPlayerGames:(state, games) => {
         state.playerGames = games;
     },
-    commitSavePlayer:(state, newPlayer) =>{
+    commitCreatePlayer:(state, newPlayer) =>{
+        //state.players.unshift(newPlayer); // unshift is the opposite of push, it creates a newPlayer at the BEGINNING of the array[0]
+        state.players.push(newPlayer);
+    },
+    commitModifyPlayer:(state, newPlayer) => {
         const index = state.players.findIndex(player => player.id === newPlayer.id);
         if(index!==-1){
             state.players.splice(index,1,newPlayer);
-        }else{
-            //state.players.unshift(newPlayer); // unshift is the opposite of push, it creates a newPlayer at the BEGINNING of the array[0]
-            state.players.push(newPlayer);
-        }   
+        }
     },
     commitSetTmpPlayer:(state, tmpPlayer) =>{
         state.tmpPlayer = tmpPlayer;
     },
     commitPlay:(state, newGame) =>{
-        const index = state.games.findIndex(game => game.id === newGame.id);
-        if(index!==-1){
-            state.games.splice(index,1,newGame);
-        }else{
-            state.games.push(newGame);
-        }   
+        state.playerGames.push(newGame);
     },
+    commitDeletePlayerGames:(state, msg) =>{
+        state.playerGames = []
+        console.log(msg);
+    }
     
 };
 

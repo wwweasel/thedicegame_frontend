@@ -4,12 +4,18 @@
             <ion-list-header lines="full" color="light">
                 <ion-label >Players</ion-label>
             </ion-list-header>
+
             <div v-bind:key="player.id" v-for="player in getPlayers">
-                <ion-item detail="true" lines="full" button @click="$router.push('/player/'+player.id)">
-                    <ion-badge slot="start" color="medium"><small>{{player.id}}</small></ion-badge>
-                    <ion-label>{{player.name}}</ion-label>
-                    <ion-badge slot="end" color="medium"><small>{{player.successrate}}</small></ion-badge>     
-                </ion-item>
+                <ion-item-sliding>
+                    <ion-item :id="'item'+player.id" detail="true" lines="full" button @click="$router.push('/player/'+player.id)">
+                        <ion-badge slot="start" color="medium"><small>{{player.id}}</small></ion-badge>
+                        <ion-label>{{player.name!=null ? player.name:'Anonymous'}}</ion-label>
+                        <ion-badge slot="end" color="medium"><small>{{player.successrate}}</small></ion-badge>     
+                    </ion-item>
+                    <ion-item-options side="end" @ionSwipe="del(player.id)">
+                        <ion-item-option color="danger" @click="del(player.id)" expandable><ios-trash-icon w="30px" h="30px"/></ion-item-option>
+                    </ion-item-options>
+                </ion-item-sliding>
             </div>
         </ion-list>
 
@@ -33,7 +39,7 @@ export default {
         }
     },
     methods:{
-        ...mapActions(['loadPlayers','savePlayer']),
+        ...mapActions(['loadPlayers','createPlayer']),
         openModal(){
             return this.$ionic.modalController
             .create({
@@ -50,6 +56,9 @@ export default {
                 },
             })
             .then(m => m.present())
+        },
+        del(id){
+            console.log("Will delete: " + id);
         }
     },
     computed: {
@@ -64,7 +73,7 @@ export default {
         // which emits 'closeModal' as well as the emitPlayer
         this.$on('closeModal', (emitPlayer) => {
             //console.log(emitPlayer.name, emitPlayer.id);
-            this.savePlayer(emitPlayer);
+            this.createPlayer(emitPlayer);
             this.$ionic.modalController.dismiss();
         })
     }

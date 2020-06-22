@@ -24,7 +24,7 @@
           <ion-col>
             <ion-item>
               <ion-label position="floating">Name</ion-label>
-              <ion-input :input="emitPlayer.name" @input="typing" name="Bla" placeholder="Enter your Player's name here"></ion-input><!--:input="test" @input="test=@event.target.value"-->
+              <ion-input :input="emitPlayer.name" @input="typing" name="Bla" :placeholder="playerName"></ion-input><!--:input="test" @input="test=@event.target.value"-->
             </ion-item>
           </ion-col>
           <!--<ion-col>
@@ -43,13 +43,14 @@ export default {
   props: {
     title: { type: String, default: 'Create Player' },
     playerId: { type: Number, default: null },
+    playerName: { type: String, default: null }
   },
   data() {
     return {
       content: 'Content',
       emitPlayer: {
         id: this.playerId,
-        name: 'Anonymous'
+        name: this.playerName
       }
     }
   },
@@ -63,7 +64,7 @@ export default {
         this.emitPlayer.name = event.target.value;
     },
     cancel(){
-      this.$ionic.modalController.dismiss();
+      this.$ionic.modalController.dismiss(); 
     }
   }
 }
