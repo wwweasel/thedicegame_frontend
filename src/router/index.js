@@ -7,7 +7,7 @@ Vue.use(IonicVueRouter)
   const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/player/:playerId', 
-    name: 'Home', 
+    name: 'Player', 
     props: true, 
     component: () =>
     import(/* webpackChunkName: "new-item" */ '../components/Player.vue')

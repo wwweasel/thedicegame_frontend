@@ -8,7 +8,9 @@ const state = {
     // ]
     players:[],
     playerGames:[],
-    tmpPlayer: {id: 1, name: 'Anonymous'},
+    rank: null,
+    loser: null,
+    winner: null
 };
 
 const getters = {
@@ -16,8 +18,10 @@ const getters = {
     getPlayer: (state) => (id) => {
         return state.players.find( player => player.id == id )
     },
-    getTmpPlayer: (state) => state.tmpPlayer,
-    getPlayerGames: (state) => state.playerGames
+    getPlayerGames: (state) => state.playerGames,
+    getRank: (state) => state.rank,
+    getLoser: (state) => state.loser,
+    getWinner: (state) => state.winner,
 };
 
 const actions = {
@@ -49,7 +53,22 @@ const actions = {
         const response = await AXIOS.delete('http://localhost:8081/players/'+playerId+'/games');
         commit('commitDeletePlayerGames',response.data);
     },
-    
+    async deletePlayer({commit}, playerId){
+        const response = await AXIOS.delete('http://localhost:8081/players/'+playerId);
+        commit('commitDeletePlayer',response.data);
+    },
+    async rank({commit}){
+        const response = await AXIOS.get('http://localhost:8081/players/ranking' );
+        commit('commitRank',response.data);
+    },
+    async loser({commit}){
+        const response = await AXIOS.get('http://localhost:8081/players/ranking/loser' );
+        commit('commitLoser',response.data);
+    },
+    async winner({commit}){
+        const response = await AXIOS.get('http://localhost:8081/players/ranking/winner' );
+        commit('commitWinner',response.data);
+    },
 
 };
 
@@ -60,7 +79,7 @@ const mutations = {
     commitPlayerGames:(state, games) => {
         state.playerGames = games;
     },
-    commitCreatePlayer:(state, newPlayer) =>{
+    commitCreatePlayer:(state, newPlayer) => {
         //state.players.unshift(newPlayer); // unshift is the opposite of push, it creates a newPlayer at the BEGINNING of the array[0]
         state.players.push(newPlayer);
     },
@@ -70,15 +89,27 @@ const mutations = {
             state.players.splice(index,1,newPlayer);
         }
     },
-    commitSetTmpPlayer:(state, tmpPlayer) =>{
+    commitSetTmpPlayer:(state, tmpPlayer) => {
         state.tmpPlayer = tmpPlayer;
     },
     commitPlay:(state, newGame) =>{
         state.playerGames.push(newGame);
     },
-    commitDeletePlayerGames:(state, msg) =>{
+    commitDeletePlayerGames:(state, msg) => {
         state.playerGames = []
         console.log(msg);
+    },
+    commitDeletePlayer:(state, palyerId) => {
+        state.players = state.players.filter( player => player.id!=palyerId );
+    },
+    commitRank:(state, result) => {
+        state.rank = result;
+    },
+    commitLoser:(state, result) => {
+        state.loser = result[0];
+    },
+    commitWinner:(state, result) => {
+        state.winner = result[0];
     }
     
 };

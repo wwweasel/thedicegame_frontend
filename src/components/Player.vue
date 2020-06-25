@@ -10,7 +10,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content ref="content">
       <ion-list lines="full">
 
         <ion-list-header color="light">
@@ -53,7 +53,7 @@
       </ion-fab>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button>
+        <ion-fab-button color="light">
           <ios-arrow-up-icon w="30px" h="30px"/>
         </ion-fab-button>
         <ion-fab-list side="top">
@@ -101,6 +101,7 @@ export  default{
         },
         triggerPlay(){
           this.play(Number(this.playerId));
+          this.$refs.content.scrollToBottom(300);
         },
         delPlayerGames(){
           this.deletePlayerGames(Number(this.playerId));
