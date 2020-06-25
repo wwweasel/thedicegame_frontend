@@ -94,9 +94,9 @@ export default {
             return this.$ionic.alertController
             .create({
                 cssClass: 'my-custom-class',
-                header: 'Loser:',
-                subHeader: 'id: '+this.getLoser.id,
-                message: this.getLoser.name!=null ? 'Name: '+this.getLoser.name:'Name: Anonymous',
+                header: 'Loser: ' + this.getLoser.name!=null ? 'Name: '+this.getLoser.name:'Name: Anonymous',
+                subHeader: '',
+                message: 'successrate: '+this.getLoser.successrate + ', id: '+this.getLoser.id,
                 buttons: ['OK'],
             })
             .then(a => a.present())
@@ -105,9 +105,9 @@ export default {
             return this.$ionic.alertController
             .create({
                 cssClass: 'my-custom-class',
-                header: 'Winner:',
-                subHeader: 'id: '+this.getWinner.id,
-                message: this.getWinner.name!=null ? 'Name: '+this.getWinner.name:'Name: Anonymous',
+                header: 'Winner: ' + this.getWinner.name!=null ? 'Name: '+this.getWinner.name:'Name: Anonymous',
+                subHeader: '',
+                message: 'successrate: '+this.getWinner.successrate + ', id: '+this.getWinner.id,
                 buttons: ['OK'],
             })
             .then(a => a.present());            
